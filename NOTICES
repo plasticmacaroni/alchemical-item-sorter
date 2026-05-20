@@ -1,0 +1,46 @@
+NOTICES
+
+ORC Notice
+----------
+This product is licensed under the ORC License located at the Library of
+Congress at TX 9-307-067 and available online at various locations including
+https://downloads.paizo.com/ORC_LicenseFINAL.pdf and others. All warranties
+are disclaimed as set forth therein.
+
+Attribution
+-----------
+This product is based on the following Licensed Material:
+
+  Pathfinder Second Edition (Player Core, Player Core 2, GM Core, Monster
+  Core, Treasure Vault, and supplementary works), © Paizo Inc., licensed
+  under the ORC License v1.0. Paizo Inc. is the Licensor of the Pathfinder
+  Second Edition mechanical content adapted herein.
+
+  Pathfinder Second Edition system for Foundry Virtual Tabletop, © the
+  PF2E For Foundry VTT volunteer development team
+  (https://github.com/foundryvtt/pf2e), which adapted Paizo's ORC-licensed
+  Licensed Material into structured JSON pack files used as the source for
+  this product's alchemical-item data.
+
+  Source pinned at commit: 4cbdaa37d6c33e9519561bae2c59a23e0288cbce
+
+If you use the Adapted Licensed Material from this product in your own
+published works, please credit us as follows:
+
+  Alchemical Items (PF2e Sortable Reference), © 2026 Alchemical Items
+  contributors, licensed under the ORC License v1.0.
+
+Reserved Material
+-----------------
+No Reserved Material elements in this product.
+
+Expressly Designated Licensed Material
+--------------------------------------
+None. The original code and visual design in this product are licensed
+separately (see LICENSE for code) and are not designated as Licensed
+Material under the ORC.
+
+Trademark Notice
+----------------
+"Pathfinder" is a trademark of Paizo Inc. This product is unofficial and is
+not endorsed by, sponsored by, or affiliated with Paizo Inc.

@@ -1,0 +1,1363 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Alchemical Codex — PF2e Alchemical Items Reference</title>
+    <meta
+      name="description"
+      content="A sortable, filterable reference of all Pathfinder Second Edition alchemical items — bombs, elixirs, mutagens, poisons, and more."
+    />
+    <script
+      id="items-data"
+      type="application/json"
+      data-src="./assets/items.8e8076c0.json"
+    ></script>
+    <style>
+      /* ─── Tokens ─── */
+      :root {
+        --bg-0: #0c0a0e;
+        --bg-1: #15121a;
+        --bg-2: #1d1924;
+        --bg-3: #2a2434;
+        --bg-hover: #2e2738;
+        --border: #2f2839;
+        --border-strong: #4a4258;
+        --fg: #e8e3ef;
+        --fg-muted: #a89db6;
+        --fg-dim: #6f6582;
+        --accent: #b58cff;
+        --accent-hi: #d4b8ff;
+
+        --rarity-common: #b8b1c4;
+        --rarity-common-glow: rgba(184, 177, 196, 0.25);
+        --rarity-uncommon: #d99450;
+        --rarity-uncommon-glow: rgba(217, 148, 80, 0.35);
+        --rarity-rare: #4f87d8;
+        --rarity-rare-glow: rgba(79, 135, 216, 0.4);
+        --rarity-unique: #b966d4;
+        --rarity-unique-glow: rgba(185, 102, 212, 0.4);
+
+        --type-bomb: #e06464;
+        --type-elixir: #5cb6e0;
+        --type-mutagen: #b87fe6;
+        --type-poison: #69c878;
+        --type-oil: #d4a35a;
+        --type-drug: #d65a8a;
+        --type-ammunition: #c3a050;
+        --type-potion: #6ec0bf;
+        --type-catalyst: #c0a36a;
+        --type-tool: #95a0b0;
+        --type-weapon: #c08a5a;
+        --type-armor: #8aa0c8;
+        --type-shield: #8aa0c8;
+        --type-other: #888092;
+
+        --dmg-acid: #6fcf7f;
+        --dmg-cold: #7fc6e6;
+        --dmg-electricity: #f3d75e;
+        --dmg-fire: #f08855;
+        --dmg-force: #c997f1;
+        --dmg-mental: #d490c2;
+        --dmg-physical: #b8b1c4;
+        --dmg-poison: #88c266;
+        --dmg-sonic: #e6c66e;
+        --dmg-vitality: #f0eac4;
+        --dmg-void: #806e96;
+        --dmg-bleed: #d65a5a;
+
+        --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+        --space-6: 24px; --space-8: 32px;
+        --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+        --radius-sm: 4px; --radius: 8px; --radius-lg: 12px;
+        --motion-fast: 100ms; --motion: 180ms; --motion-slow: 280ms;
+        --shadow-1: 0 2px 6px rgba(0, 0, 0, 0.3);
+        --shadow-2: 0 6px 18px rgba(0, 0, 0, 0.45);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        :root { --motion-fast: 0ms; --motion: 0ms; --motion-slow: 0ms; }
+      }
+
+      /* ─── Reset / base ─── */
+      *, *::before, *::after { box-sizing: border-box; }
+      html, body { margin: 0; padding: 0; }
+      button, input, select, textarea { font: inherit; color: inherit; }
+      button { cursor: pointer; background: none; border: 0; padding: 0; }
+      a { color: var(--accent); text-decoration: none; }
+      a:hover { color: var(--accent-hi); text-decoration: underline; }
+      table { border-collapse: collapse; }
+      img, svg { display: block; max-width: 100%; }
+      [hidden] { display: none !important; }
+      html {
+        font-size: 15px; line-height: 1.5;
+        background: var(--bg-0); color: var(--fg);
+        font-family: var(--font-sans);
+        -webkit-text-size-adjust: 100%;
+      }
+      body {
+        min-height: 100vh;
+        background:
+          radial-gradient(1200px 600px at 80% -10%, rgba(181, 140, 255, 0.08), transparent 60%),
+          radial-gradient(900px 500px at -10% 110%, rgba(95, 200, 200, 0.05), transparent 60%),
+          var(--bg-0);
+      }
+      code {
+        font-family: var(--font-mono); font-size: 0.92em;
+        background: var(--bg-2); padding: 1px 4px; border-radius: 3px;
+      }
+      ::selection { background: var(--accent); color: var(--bg-0); }
+      :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+      /* ─── Header ─── */
+      .app-header { padding: var(--space-6) var(--space-6) var(--space-4); max-width: 1400px; margin: 0 auto; }
+      .app-header__title {
+        font-size: 1.875rem; font-weight: 700; letter-spacing: -0.01em;
+        margin: 0 0 var(--space-1);
+        background: linear-gradient(120deg, #d4b8ff 0%, #5cb6e0 50%, #69c878 100%);
+        -webkit-background-clip: text; background-clip: text; color: transparent;
+      }
+      .app-header__subtitle { margin: 0; color: var(--fg-muted); font-size: 0.95rem; }
+
+      /* ─── App layout ─── */
+      #app { max-width: 1400px; margin: 0 auto; padding: 0 var(--space-6) var(--space-8); }
+
+      /* ─── Toolbar ─── */
+      .toolbar {
+        display: grid; grid-template-columns: 1fr auto; gap: var(--space-3); align-items: center;
+        background: var(--bg-1); padding: var(--space-3) var(--space-4);
+        border: 1px solid var(--border); border-radius: var(--radius);
+        position: sticky; top: 0; z-index: 5; backdrop-filter: blur(6px);
+      }
+      .search {
+        display: flex; align-items: center; gap: var(--space-2);
+        background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--radius);
+        padding: var(--space-2) var(--space-3); min-width: 200px;
+      }
+      .search:focus-within { border-color: var(--accent); }
+      .search__icon { color: var(--fg-dim); flex: 0 0 16px; }
+      .search__input { flex: 1; background: transparent; border: 0; outline: none; color: var(--fg); font-size: 0.95rem; }
+      .search__input::placeholder { color: var(--fg-dim); }
+      .search__clear { color: var(--fg-dim); padding: 2px 6px; border-radius: 4px; }
+      .search__clear:hover { color: var(--fg); background: var(--bg-3); }
+      .toolbar__actions { display: flex; gap: var(--space-2); align-items: center; }
+
+      .btn {
+        background: var(--bg-2); border: 1px solid var(--border); border-radius: var(--radius);
+        padding: var(--space-2) var(--space-3); color: var(--fg); font-size: 0.85rem;
+        transition: background var(--motion-fast), border-color var(--motion-fast);
+        white-space: nowrap;
+      }
+      .btn:hover { background: var(--bg-hover); border-color: var(--border-strong); }
+      .btn.is-active {
+        background: color-mix(in srgb, var(--accent) 22%, var(--bg-2));
+        border-color: var(--accent); color: var(--accent-hi);
+      }
+
+      .count { color: var(--fg-muted); font-size: 0.85rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+      .count strong { color: var(--fg); font-weight: 600; }
+
+      /* ─── Filter bar ─── */
+      .filter-bar {
+        margin-top: var(--space-4); background: var(--bg-1); border: 1px solid var(--border);
+        border-radius: var(--radius); padding: var(--space-3) var(--space-4); display: grid; gap: var(--space-3);
+      }
+      .filter-row { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; }
+      .filter-row__label {
+        color: var(--fg-muted); font-size: 0.78rem; text-transform: uppercase;
+        letter-spacing: 0.04em; flex: 0 0 90px;
+      }
+      .chip {
+        background: var(--bg-2); border: 1px solid var(--border); border-radius: 999px;
+        padding: 3px 10px; font-size: 0.82rem; color: var(--fg-muted);
+        transition: background var(--motion-fast), border-color var(--motion-fast), color var(--motion-fast);
+        display: inline-flex; align-items: center; gap: 6px;
+      }
+      .chip:hover { background: var(--bg-hover); color: var(--fg); }
+      .chip__count { color: var(--fg-dim); font-size: 0.75rem; font-variant-numeric: tabular-nums; }
+      .chip.is-active {
+        color: var(--fg);
+        background: color-mix(in srgb, var(--chip-accent, var(--accent)) 22%, var(--bg-2));
+        border-color: var(--chip-accent, var(--accent));
+      }
+      .chip.is-active .chip__count { color: var(--fg); }
+
+      .chip[data-rarity="common"]   { --chip-accent: var(--rarity-common);   }
+      .chip[data-rarity="uncommon"] { --chip-accent: var(--rarity-uncommon); }
+      .chip[data-rarity="rare"]     { --chip-accent: var(--rarity-rare);     }
+      .chip[data-rarity="unique"]   { --chip-accent: var(--rarity-unique);   }
+
+      .chip[data-subtype="bomb"]       { --chip-accent: var(--type-bomb);       }
+      .chip[data-subtype="elixir"]     { --chip-accent: var(--type-elixir);     }
+      .chip[data-subtype="mutagen"]    { --chip-accent: var(--type-mutagen);    }
+      .chip[data-subtype="poison"]     { --chip-accent: var(--type-poison);     }
+      .chip[data-subtype="oil"]        { --chip-accent: var(--type-oil);        }
+      .chip[data-subtype="drug"]       { --chip-accent: var(--type-drug);       }
+      .chip[data-subtype="ammunition"] { --chip-accent: var(--type-ammunition); }
+      .chip[data-subtype="potion"]     { --chip-accent: var(--type-potion);     }
+      .chip[data-subtype="catalyst"]   { --chip-accent: var(--type-catalyst);   }
+      .chip[data-subtype="tool"]       { --chip-accent: var(--type-tool);       }
+      .chip[data-subtype="weapon"]     { --chip-accent: var(--type-weapon);     }
+      .chip[data-subtype="armor"]      { --chip-accent: var(--type-armor);      }
+      .chip[data-subtype="shield"]     { --chip-accent: var(--type-shield);     }
+      .chip[data-subtype="other"]      { --chip-accent: var(--type-other);      }
+
+      .chip[data-damage="acid"]        { --chip-accent: var(--dmg-acid);        }
+      .chip[data-damage="cold"]        { --chip-accent: var(--dmg-cold);        }
+      .chip[data-damage="electricity"] { --chip-accent: var(--dmg-electricity); }
+      .chip[data-damage="fire"]        { --chip-accent: var(--dmg-fire);        }
+      .chip[data-damage="force"]       { --chip-accent: var(--dmg-force);       }
+      .chip[data-damage="mental"]      { --chip-accent: var(--dmg-mental);      }
+      .chip[data-damage="physical"]    { --chip-accent: var(--dmg-physical);    }
+      .chip[data-damage="poison"]      { --chip-accent: var(--dmg-poison);      }
+      .chip[data-damage="sonic"]       { --chip-accent: var(--dmg-sonic);       }
+      .chip[data-damage="vitality"]    { --chip-accent: var(--dmg-vitality);    }
+      .chip[data-damage="void"]        { --chip-accent: var(--dmg-void);        }
+      .chip[data-damage="bleed"]       { --chip-accent: var(--dmg-bleed);       }
+
+      .range { display: inline-flex; align-items: center; gap: var(--space-2); }
+      .range__input {
+        width: 56px; background: var(--bg-2); border: 1px solid var(--border);
+        border-radius: var(--radius-sm); padding: 4px 6px; text-align: center;
+        font-variant-numeric: tabular-nums;
+      }
+      .range__sep { color: var(--fg-dim); }
+
+      /* ─── Table ─── */
+      .table-wrap {
+        margin-top: var(--space-4); background: var(--bg-1); border: 1px solid var(--border);
+        border-radius: var(--radius); overflow: hidden;
+      }
+      .table { width: 100%; font-size: 0.92rem; }
+      .table thead th {
+        position: sticky; top: 0; background: var(--bg-2); color: var(--fg-muted);
+        font-weight: 600; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.04em;
+        text-align: left; padding: var(--space-3) var(--space-3);
+        border-bottom: 1px solid var(--border); white-space: nowrap;
+        user-select: none; cursor: pointer; z-index: 2;
+      }
+      .table thead th:hover { color: var(--fg); }
+      .table thead th[aria-sort="ascending"]::after  { content: " ▲"; color: var(--accent); }
+      .table thead th[aria-sort="descending"]::after { content: " ▼"; color: var(--accent); }
+      .table thead th[data-sort-disabled] { cursor: default; }
+      .table thead th[data-sort-disabled]:hover { color: var(--fg-muted); }
+
+      .row { border-bottom: 1px solid var(--border); transition: background var(--motion-fast); }
+      .row:hover { background: var(--bg-2); }
+      .row td { padding: var(--space-3) var(--space-3); vertical-align: middle; }
+      .row.is-known { background: color-mix(in srgb, var(--accent) 8%, transparent); }
+      .row.is-known:hover { background: color-mix(in srgb, var(--accent) 14%, transparent); }
+
+      .star {
+        font-size: 1.1rem; color: var(--fg-dim); padding: 4px;
+        border-radius: var(--radius-sm); line-height: 1;
+        transition: color var(--motion-fast), transform var(--motion-fast);
+      }
+      .star:hover { color: var(--rarity-uncommon); transform: scale(1.1); }
+      .star.is-on { color: var(--rarity-uncommon); }
+
+      .row__name { font-weight: 500; color: var(--fg); }
+      .row__name-base { color: var(--fg); }
+      .row__name-grade { color: var(--fg-dim); font-weight: 400; font-size: 0.85rem; margin-left: 4px; }
+
+      .tag {
+        display: inline-block; padding: 2px 8px; border-radius: 999px;
+        font-size: 0.75rem; font-weight: 500; line-height: 1.5;
+        border: 1px solid color-mix(in srgb, var(--tag-color, var(--fg-dim)) 50%, transparent);
+        background: color-mix(in srgb, var(--tag-color, var(--fg-dim)) 14%, var(--bg-2));
+        color: color-mix(in srgb, var(--tag-color, var(--fg-muted)) 80%, var(--fg));
+        white-space: nowrap;
+      }
+      .tag[data-subtype="bomb"]       { --tag-color: var(--type-bomb);       }
+      .tag[data-subtype="elixir"]     { --tag-color: var(--type-elixir);     }
+      .tag[data-subtype="mutagen"]    { --tag-color: var(--type-mutagen);    }
+      .tag[data-subtype="poison"]     { --tag-color: var(--type-poison);     }
+      .tag[data-subtype="oil"]        { --tag-color: var(--type-oil);        }
+      .tag[data-subtype="drug"]       { --tag-color: var(--type-drug);       }
+      .tag[data-subtype="ammunition"] { --tag-color: var(--type-ammunition); }
+      .tag[data-subtype="potion"]     { --tag-color: var(--type-potion);     }
+      .tag[data-subtype="catalyst"]   { --tag-color: var(--type-catalyst);   }
+      .tag[data-subtype="tool"]       { --tag-color: var(--type-tool);       }
+      .tag[data-subtype="weapon"]     { --tag-color: var(--type-weapon);     }
+      .tag[data-subtype="armor"]      { --tag-color: var(--type-armor);      }
+      .tag[data-subtype="shield"]     { --tag-color: var(--type-shield);     }
+      .tag[data-subtype="other"]      { --tag-color: var(--type-other);      }
+      .tag[data-damage="acid"]        { --tag-color: var(--dmg-acid);        }
+      .tag[data-damage="cold"]        { --tag-color: var(--dmg-cold);        }
+      .tag[data-damage="electricity"] { --tag-color: var(--dmg-electricity); }
+      .tag[data-damage="fire"]        { --tag-color: var(--dmg-fire);        }
+      .tag[data-damage="force"]       { --tag-color: var(--dmg-force);       }
+      .tag[data-damage="mental"]      { --tag-color: var(--dmg-mental);      }
+      .tag[data-damage="physical"]    { --tag-color: var(--dmg-physical);    }
+      .tag[data-damage="poison"]      { --tag-color: var(--dmg-poison);      }
+      .tag[data-damage="sonic"]       { --tag-color: var(--dmg-sonic);       }
+      .tag[data-damage="vitality"]    { --tag-color: var(--dmg-vitality);    }
+      .tag[data-damage="void"]        { --tag-color: var(--dmg-void);        }
+      .tag[data-damage="bleed"]       { --tag-color: var(--dmg-bleed);       }
+
+      .rarity {
+        display: inline-flex; align-items: center; gap: 6px;
+        font-size: 0.82rem; color: var(--fg-muted); text-transform: capitalize;
+      }
+      .rarity::before {
+        content: ""; width: 8px; height: 8px; border-radius: 999px;
+        background: var(--rarity-color, var(--rarity-common));
+        box-shadow: 0 0 6px var(--rarity-glow, var(--rarity-common-glow));
+      }
+      .rarity[data-rarity="common"]   { --rarity-color: var(--rarity-common);   --rarity-glow: var(--rarity-common-glow);   }
+      .rarity[data-rarity="uncommon"] { --rarity-color: var(--rarity-uncommon); --rarity-glow: var(--rarity-uncommon-glow); }
+      .rarity[data-rarity="rare"]     { --rarity-color: var(--rarity-rare);     --rarity-glow: var(--rarity-rare-glow);     }
+      .rarity[data-rarity="unique"]   { --rarity-color: var(--rarity-unique);   --rarity-glow: var(--rarity-unique-glow);   }
+
+      .cell-level { font-variant-numeric: tabular-nums; text-align: right; }
+      .cell-price { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--fg-muted); }
+      .cell-bulk  { font-variant-numeric: tabular-nums; text-align: center; color: var(--fg-muted); }
+
+      .traits-inline {
+        font-size: 0.78rem; color: var(--fg-dim); max-width: 260px;
+        overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      }
+
+      .row__expand {
+        color: var(--fg-dim); width: 20px; height: 20px;
+        display: inline-flex; align-items: center; justify-content: center;
+        transition: transform var(--motion-fast), color var(--motion-fast);
+      }
+      .row.is-open .row__expand { transform: rotate(90deg); color: var(--accent); }
+      .row:hover .row__expand { color: var(--fg); }
+
+      .detail-row { display: none; background: var(--bg-2); }
+      .row.is-open + .detail-row { display: table-row; }
+      .detail-row td { padding: var(--space-4) var(--space-6) var(--space-6); border-bottom: 1px solid var(--border); }
+      .detail { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--space-4) var(--space-6); color: var(--fg); }
+      .detail__body { line-height: 1.55; }
+      .detail__body p { margin: 0 0 var(--space-3); }
+      .detail__body p:last-child { margin-bottom: 0; }
+      .detail__body ul, .detail__body ol { margin: 0 0 var(--space-3) var(--space-4); padding: 0; }
+      .detail__body hr { border: 0; border-top: 1px solid var(--border); margin: var(--space-3) 0; }
+      .detail__body strong { color: var(--fg); }
+      .detail__body em { color: var(--fg-muted); font-style: italic; }
+      .detail__meta { display: grid; gap: var(--space-2); font-size: 0.85rem; color: var(--fg-muted); min-width: 220px; }
+      .detail__meta dt { color: var(--fg-dim); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 1px; }
+      .detail__meta dd { margin: 0; color: var(--fg); }
+      .detail__meta-row { display: grid; gap: 2px; }
+      .detail__traits { display: flex; flex-wrap: wrap; gap: 4px; }
+      .detail__trait-pill {
+        font-size: 0.74rem; padding: 2px 8px; border-radius: 999px;
+        border: 1px solid var(--border); background: var(--bg-1); color: var(--fg-muted);
+      }
+
+      .empty { padding: var(--space-8); text-align: center; color: var(--fg-muted); }
+      .empty strong { color: var(--fg); display: block; margin-bottom: var(--space-2); font-size: 1.05rem; }
+
+      /* ─── Modals ─── */
+      .modal {
+        border: 0; background: transparent; padding: 0; color: var(--fg);
+        max-width: min(640px, 92vw); width: 100%;
+      }
+      .modal::backdrop { background: rgba(8, 6, 12, 0.65); backdrop-filter: blur(4px); }
+      .modal__card {
+        background: var(--bg-1); border: 1px solid var(--border-strong);
+        border-radius: var(--radius-lg); box-shadow: var(--shadow-2);
+        padding: var(--space-4) var(--space-6) var(--space-6);
+        display: grid; gap: var(--space-4);
+      }
+      .modal__head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+      .modal__title { margin: 0; font-size: 1.15rem; font-weight: 600; }
+      .modal__close {
+        color: var(--fg-dim); font-size: 1.1rem; width: 32px; height: 32px;
+        border-radius: var(--radius-sm); display: inline-flex; align-items: center; justify-content: center;
+      }
+      .modal__close:hover { color: var(--fg); background: var(--bg-2); }
+      .modal__lede { margin: 0; color: var(--fg-muted); font-size: 0.92rem; line-height: 1.5; }
+      .modal__status { margin: 0; font-size: 0.85rem; color: var(--fg-muted); min-height: 1.2em; }
+      .modal__status.is-success { color: #a4e2a4; }
+      .modal__status.is-error   { color: #ff9a9a; }
+      .modal__status strong { color: var(--fg); }
+      .modal__actions { display: flex; gap: var(--space-2); justify-content: flex-end; flex-wrap: wrap; }
+
+      .btn--primary {
+        background: color-mix(in srgb, var(--accent) 28%, var(--bg-2));
+        border-color: var(--accent); color: var(--accent-hi);
+      }
+      .btn--primary:hover:not([disabled]) { background: color-mix(in srgb, var(--accent) 38%, var(--bg-2)); }
+      .btn--danger {
+        background: color-mix(in srgb, var(--type-bomb) 22%, var(--bg-2));
+        border-color: var(--type-bomb); color: #ffd6d6;
+      }
+      .btn--danger:hover:not([disabled]) { background: color-mix(in srgb, var(--type-bomb) 32%, var(--bg-2)); }
+      .btn[disabled], .btn.is-disabled { opacity: 0.45; cursor: not-allowed; }
+      .btn.is-success {
+        background: color-mix(in srgb, #69c878 24%, var(--bg-2));
+        border-color: #69c878; color: #d5f5dc;
+      }
+      .btn.is-error {
+        background: color-mix(in srgb, var(--type-bomb) 26%, var(--bg-2));
+        border-color: var(--type-bomb); color: #ffd6d6;
+      }
+
+      .share-block { display: grid; gap: var(--space-1); }
+      .share-block__label {
+        font-size: 0.78rem; color: var(--fg-muted);
+        text-transform: uppercase; letter-spacing: 0.04em;
+      }
+      .share-block__row { display: flex; gap: var(--space-2); align-items: stretch; }
+      .share-block__input {
+        flex: 1; background: var(--bg-2); border: 1px solid var(--border);
+        border-radius: var(--radius); padding: var(--space-2) var(--space-3);
+        font-family: var(--font-mono); font-size: 0.85rem; color: var(--fg);
+        resize: vertical; min-width: 0;
+      }
+      .share-block__input--code { word-break: break-all; line-height: 1.4; }
+      .share-block__input:focus { outline: 2px solid var(--accent); outline-offset: -1px; border-color: var(--accent); }
+
+      /* ─── Footer ─── */
+      .app-footer {
+        max-width: 1400px; margin: 0 auto; padding: var(--space-6);
+        color: var(--fg-dim); font-size: 0.82rem; border-top: 1px solid var(--border);
+      }
+      .app-footer p { margin: 0 0 var(--space-2); }
+
+      /* ─── Small screens ─── */
+      @media (max-width: 760px) {
+        #app, .app-header, .app-footer { padding-left: var(--space-3); padding-right: var(--space-3); }
+        .toolbar { grid-template-columns: 1fr; }
+        .toolbar__actions { flex-wrap: wrap; }
+        .filter-row__label { flex-basis: 100%; }
+        .table th.col-traits, .table td.col-traits { display: none; }
+        .table th.col-bulk, .table td.col-bulk { display: none; }
+        .table th.col-price, .table td.col-price { display: none; }
+      }
+      @media (max-width: 500px) {
+        .table th.col-damage, .table td.col-damage { display: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="app-header">
+      <h1 class="app-header__title">Alchemical Codex</h1>
+      <p class="app-header__subtitle">A sortable reference of every Pathfinder 2e alchemical item.</p>
+    </header>
+
+    <main id="app"></main>
+
+    <footer class="app-footer">
+      <p>
+        Pathfinder Second Edition alchemical-item data used under the
+        <a href="https://downloads.paizo.com/ORC_LicenseFINAL.pdf" rel="external noopener" target="_blank">ORC License</a>
+        from Paizo Inc. Data adapted from the
+        <a href="https://github.com/foundryvtt/pf2e" rel="external noopener" target="_blank">Foundry VTT PF2e module</a>.
+        See <code>NOTICES</code> in the repo for full attribution.
+      </p>
+      <p class="data-version" data-version="8e8076c0">Data version: 8e8076c0 (Foundry @4cbdaa37)</p>
+    </footer>
+
+    <script>
+"use strict";
+(() => {
+/* ═══════════════════════ Format helpers ═══════════════════════ */
+function cap(s) { return s ? s[0].toUpperCase() + s.slice(1) : ""; }
+function traitPill(t) {
+  return t.split("-").map((p) => p[0].toUpperCase() + p.slice(1)).join(" ");
+}
+
+/* ═══════════════════════ Sort ═══════════════════════ */
+const RARITY_ORDER = { common: 0, uncommon: 1, rare: 2, unique: 3 };
+const COMPARATORS = {
+  name:    (a, b) => a.base === b.base ? a.gradeOrder - b.gradeOrder : (a.base < b.base ? -1 : 1),
+  level:   (a, b) => a.level - b.level,
+  rarity:  (a, b) => (RARITY_ORDER[a.rarity] ?? 99) - (RARITY_ORDER[b.rarity] ?? 99),
+  price:   (a, b) => a.priceGp - b.priceGp,
+  subtype: (a, b) => a.subtype < b.subtype ? -1 : a.subtype > b.subtype ? 1 : 0,
+  damage:  (a, b) => {
+    const ax = a.damageType ?? "~", bx = b.damageType ?? "~";
+    return ax === bx ? 0 : ax < bx ? -1 : 1;
+  },
+};
+function secondary(a, b) {
+  if (a.base !== b.base) return a.base < b.base ? -1 : 1;
+  return a.gradeOrder - b.gradeOrder;
+}
+function sortItems(items, key, dir) {
+  const cmp = COMPARATORS[key] ?? COMPARATORS.name;
+  const sign = dir === "desc" ? -1 : 1;
+  return [...items].sort((a, b) => {
+    const r = cmp(a, b);
+    return r !== 0 ? r * sign : secondary(a, b);
+  });
+}
+
+/* ═══════════════════════ Share-code codec ═══════════════════════
+ * Set<itemId> ↔ compact base64url string.
+ * 0x01 = bitset over item indices; 0x02 = sorted varint-delta list.
+ * Encoder picks whichever is smaller; decoder dispatches on byte 0.
+ */
+const CODEC_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
+const VERSION_BITSET = 0x01;
+const VERSION_LIST   = 0x02;
+
+function toBitset(idSet, indexOfId) {
+  let maxIdx = -1;
+  for (const id of idSet) {
+    const i = indexOfId.get(id);
+    if (i == null) continue;
+    if (i > maxIdx) maxIdx = i;
+  }
+  if (maxIdx < 0) return new Uint8Array(0);
+  const bytes = new Uint8Array(Math.floor(maxIdx / 8) + 1);
+  for (const id of idSet) {
+    const i = indexOfId.get(id);
+    if (i == null) continue;
+    bytes[i >> 3] |= 1 << (i & 7);
+  }
+  return bytes;
+}
+function fromBitset(bytes, byIndex) {
+  const set = new Set();
+  for (let b = 0; b < bytes.length; b++) {
+    const byte = bytes[b];
+    if (!byte) continue;
+    for (let bit = 0; bit < 8; bit++) {
+      if (byte & (1 << bit)) {
+        const it = byIndex[b * 8 + bit];
+        if (it) set.add(it.id);
+      }
+    }
+  }
+  return set;
+}
+function toIndexList(idSet, indexOfId) {
+  const indices = [];
+  for (const id of idSet) {
+    const i = indexOfId.get(id);
+    if (i != null) indices.push(i);
+  }
+  indices.sort((a, b) => a - b);
+  const bytes = [];
+  let prev = 0;
+  for (const idx of indices) {
+    let delta = idx - prev;
+    while (delta >= 0x80) { bytes.push((delta & 0x7f) | 0x80); delta >>>= 7; }
+    bytes.push(delta);
+    prev = idx;
+  }
+  return new Uint8Array(bytes);
+}
+function fromIndexList(bytes, byIndex) {
+  const set = new Set();
+  let i = 0, prev = 0;
+  while (i < bytes.length) {
+    let delta = 0, shift = 0, b;
+    do {
+      if (i >= bytes.length) throw new Error("share code: truncated varint");
+      b = bytes[i++];
+      delta |= (b & 0x7f) << shift;
+      shift += 7;
+      if (shift > 35) throw new Error("share code: varint too long");
+    } while (b & 0x80);
+    const idx = prev + delta;
+    const it = byIndex[idx];
+    if (it) set.add(it.id);
+    prev = idx;
+  }
+  return set;
+}
+function bytesToBase64Url(bytes) {
+  let out = "", i = 0;
+  for (; i + 2 < bytes.length; i += 3) {
+    const b0 = bytes[i], b1 = bytes[i + 1], b2 = bytes[i + 2];
+    out += CODEC_ALPHABET[b0 >> 2];
+    out += CODEC_ALPHABET[((b0 & 0x03) << 4) | (b1 >> 4)];
+    out += CODEC_ALPHABET[((b1 & 0x0f) << 2) | (b2 >> 6)];
+    out += CODEC_ALPHABET[b2 & 0x3f];
+  }
+  const rem = bytes.length - i;
+  if (rem === 1) {
+    const b0 = bytes[i];
+    out += CODEC_ALPHABET[b0 >> 2];
+    out += CODEC_ALPHABET[(b0 & 0x03) << 4];
+  } else if (rem === 2) {
+    const b0 = bytes[i], b1 = bytes[i + 1];
+    out += CODEC_ALPHABET[b0 >> 2];
+    out += CODEC_ALPHABET[((b0 & 0x03) << 4) | (b1 >> 4)];
+    out += CODEC_ALPHABET[(b1 & 0x0f) << 2];
+  }
+  return out;
+}
+function base64UrlToBytes(s) {
+  const decode = new Uint8Array(256).fill(0xff);
+  for (let i = 0; i < CODEC_ALPHABET.length; i++) decode[CODEC_ALPHABET.charCodeAt(i)] = i;
+  for (let i = 0; i < s.length; i++) {
+    if (decode[s.charCodeAt(i)] === 0xff) throw new Error("invalid base64url character at position " + i);
+  }
+  const fullChunks = Math.floor(s.length / 4);
+  const rem = s.length - fullChunks * 4;
+  if (rem === 1) throw new Error("invalid base64url length");
+  const out = new Uint8Array(fullChunks * 3 + (rem === 0 ? 0 : rem - 1));
+  let j = 0, p = 0;
+  for (; p + 3 < s.length; p += 4) {
+    const c0 = decode[s.charCodeAt(p)], c1 = decode[s.charCodeAt(p + 1)];
+    const c2 = decode[s.charCodeAt(p + 2)], c3 = decode[s.charCodeAt(p + 3)];
+    out[j++] = (c0 << 2) | (c1 >> 4);
+    out[j++] = ((c1 & 0x0f) << 4) | (c2 >> 2);
+    out[j++] = ((c2 & 0x03) << 6) | c3;
+  }
+  if (rem === 2) {
+    const c0 = decode[s.charCodeAt(p)], c1 = decode[s.charCodeAt(p + 1)];
+    out[j++] = (c0 << 2) | (c1 >> 4);
+  } else if (rem === 3) {
+    const c0 = decode[s.charCodeAt(p)], c1 = decode[s.charCodeAt(p + 1)], c2 = decode[s.charCodeAt(p + 2)];
+    out[j++] = (c0 << 2) | (c1 >> 4);
+    out[j++] = ((c1 & 0x0f) << 4) | (c2 >> 2);
+  }
+  return out;
+}
+function encodeKnown(idSet, indexOfId) {
+  const bitset = toBitset(idSet, indexOfId);
+  const list = toIndexList(idSet, indexOfId);
+  const useList = list.length < bitset.length;
+  const inner = useList ? list : bitset;
+  const payload = new Uint8Array(1 + inner.length);
+  payload[0] = useList ? VERSION_LIST : VERSION_BITSET;
+  payload.set(inner, 1);
+  return bytesToBase64Url(payload);
+}
+function decodeKnown(str, byIndex) {
+  if (typeof str !== "string" || str.length === 0) throw new Error("share code is empty");
+  const bytes = base64UrlToBytes(str);
+  if (bytes.length === 0) throw new Error("share code is empty");
+  const version = bytes[0], inner = bytes.slice(1);
+  if (version === VERSION_BITSET) return fromBitset(inner, byIndex);
+  if (version === VERSION_LIST)   return fromIndexList(inner, byIndex);
+  throw new Error(`unsupported share-code version ${version}`);
+}
+
+/* ═══════════════════════ Store ═══════════════════════
+ * Tiny pub-sub store. Mutation discipline: replace whole values, never
+ * mutate in place — keeps subscriber comparisons cheap.
+ */
+const STORAGE_KEY = "alch-codex.v1";
+const state = {
+  query: "",
+  subtypes: new Set(),
+  rarities: new Set(),
+  damages: new Set(),
+  levelMin: 0,
+  levelMax: 20,
+  showKnownOnly: false,
+  known: new Set(),
+  sortKey: "level",
+  sortDir: "asc",
+  openId: null,
+};
+const subs = new Set();
+function subscribe(fn) { subs.add(fn); return () => subs.delete(fn); }
+let pending = false;
+function notify() {
+  if (pending) return;
+  pending = true;
+  queueMicrotask(() => { pending = false; for (const fn of subs) fn(state); });
+}
+function persist() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      subtypes: [...state.subtypes], rarities: [...state.rarities], damages: [...state.damages],
+      levelMin: state.levelMin, levelMax: state.levelMax,
+      showKnownOnly: state.showKnownOnly, known: [...state.known],
+      sortKey: state.sortKey, sortDir: state.sortDir,
+    }));
+  } catch {}
+}
+function hydrate(maxLevel) {
+  state.levelMax = maxLevel;
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const data = JSON.parse(raw);
+    if (Array.isArray(data.subtypes)) state.subtypes = new Set(data.subtypes);
+    if (Array.isArray(data.rarities)) state.rarities = new Set(data.rarities);
+    if (Array.isArray(data.damages))  state.damages  = new Set(data.damages);
+    if (Number.isFinite(data.levelMin)) state.levelMin = data.levelMin;
+    if (Number.isFinite(data.levelMax)) state.levelMax = data.levelMax;
+    if (typeof data.showKnownOnly === "boolean") state.showKnownOnly = data.showKnownOnly;
+    if (Array.isArray(data.known)) state.known = new Set(data.known);
+    if (typeof data.sortKey === "string") state.sortKey = data.sortKey;
+    if (data.sortDir === "asc" || data.sortDir === "desc") state.sortDir = data.sortDir;
+  } catch {}
+}
+function setQuery(q)        { if (state.query === q) return; state.query = q; notify(); }
+function toggleSubtype(s)   { const n = new Set(state.subtypes); n.has(s) ? n.delete(s) : n.add(s); state.subtypes = n; persist(); notify(); }
+function toggleRarity(r)    { const n = new Set(state.rarities); n.has(r) ? n.delete(r) : n.add(r); state.rarities = n; persist(); notify(); }
+function toggleDamage(d)    { const n = new Set(state.damages);  n.has(d) ? n.delete(d) : n.add(d); state.damages  = n; persist(); notify(); }
+function setLevelRange(lo, hi) { state.levelMin = lo; state.levelMax = hi; persist(); notify(); }
+function toggleKnown(id)    { const n = new Set(state.known); n.has(id) ? n.delete(id) : n.add(id); state.known = n; persist(); notify(); }
+function toggleShowKnownOnly() { state.showKnownOnly = !state.showKnownOnly; persist(); notify(); }
+function setSort(key) {
+  if (state.sortKey === key) state.sortDir = state.sortDir === "asc" ? "desc" : "asc";
+  else { state.sortKey = key; state.sortDir = "asc"; }
+  persist(); notify();
+}
+function setOpenId(id)      { if (state.openId === id) return; state.openId = id; notify(); }
+function replaceKnown(s)    { state.known = new Set(s); persist(); notify(); }
+function mergeKnown(s)      { const n = new Set(state.known); for (const id of s) n.add(id); state.known = n; persist(); notify(); }
+function resetFilters() {
+  state.query = "";
+  state.subtypes = new Set();
+  state.rarities = new Set();
+  state.damages = new Set();
+  state.levelMin = 0;
+  state.showKnownOnly = false;
+  persist(); notify();
+}
+
+/* ═══════════════════════ Data ═══════════════════════ */
+async function loadItems() {
+  const tag = document.getElementById("items-data");
+  if (!tag) throw new Error('Missing <script id="items-data">.');
+  const src = tag.dataset.src;
+  if (!src) throw new Error('Missing data-src on <script id="items-data">.');
+  const res = await fetch(src, { cache: "force-cache" });
+  if (!res.ok) throw new Error(`Failed to load ${src}: HTTP ${res.status}`);
+  const items = await res.json();
+  for (const it of items) { Object.freeze(it.traits); Object.freeze(it); }
+  return Object.freeze(items);
+}
+function buildIndices(items) {
+  const bySubtype = new Map(), byRarity = new Map(), byDamage = new Map(), indexOfId = new Map();
+  let maxLevel = 0;
+  for (let i = 0; i < items.length; i++) {
+    const it = items[i];
+    indexOfId.set(it.id, i);
+    bySubtype.set(it.subtype, (bySubtype.get(it.subtype) ?? 0) + 1);
+    byRarity.set(it.rarity, (byRarity.get(it.rarity) ?? 0) + 1);
+    if (it.damageType) byDamage.set(it.damageType, (byDamage.get(it.damageType) ?? 0) + 1);
+    if (it.level > maxLevel) maxLevel = it.level;
+  }
+  return { bySubtype, byRarity, byDamage, maxLevel, indexOfId, byIndex: items };
+}
+
+/* ═══════════════════════ Share modals ═══════════════════════ */
+const HASH_PREFIX = "#k/";
+function buildShareUrl(code) {
+  return `${location.origin}${location.pathname}${location.search}${HASH_PREFIX}${code}`;
+}
+function takeHashCode() {
+  const h = location.hash;
+  if (!h || !h.startsWith(HASH_PREFIX)) return null;
+  const code = h.slice(HASH_PREFIX.length);
+  try { history.replaceState(null, "", location.pathname + location.search); }
+  catch { location.hash = ""; }
+  return code || null;
+}
+function mountDialog(content) {
+  const dialog = document.createElement("dialog");
+  dialog.className = "modal";
+  dialog.appendChild(content);
+  document.body.appendChild(dialog);
+  const cleanup = () => { if (dialog.open) dialog.close(); dialog.remove(); };
+  dialog.addEventListener("close", cleanup, { once: true });
+  dialog.addEventListener("click", (e) => { if (e.target === dialog) cleanup(); });
+  dialog.showModal();
+  return { dialog, close: cleanup };
+}
+function makeHead(title) {
+  const head = document.createElement("div");
+  head.className = "modal__head";
+  const h = document.createElement("h2");
+  h.className = "modal__title";
+  h.textContent = title;
+  const x = document.createElement("button");
+  x.type = "button"; x.className = "modal__close"; x.setAttribute("aria-label", "Close"); x.textContent = "✕";
+  head.append(h, x);
+  return { head, closeBtn: x };
+}
+function openExportModal(indices) {
+  const body = document.createElement("div");
+  body.className = "modal__card";
+  const { head, closeBtn } = makeHead("Export known formulas");
+  body.appendChild(head);
+  const sub = document.createElement("p");
+  sub.className = "modal__lede";
+  body.appendChild(sub);
+
+  const linkBox = document.createElement("div"); linkBox.className = "share-block";
+  const linkLabel = document.createElement("label"); linkLabel.className = "share-block__label"; linkLabel.textContent = "Share link";
+  const linkRow = document.createElement("div"); linkRow.className = "share-block__row";
+  const linkInput = document.createElement("input"); linkInput.type = "text"; linkInput.className = "share-block__input"; linkInput.readOnly = true;
+  const linkCopy = document.createElement("button"); linkCopy.type = "button"; linkCopy.className = "btn btn--primary"; linkCopy.textContent = "Copy link";
+  linkRow.append(linkInput, linkCopy);
+  linkBox.append(linkLabel, linkRow);
+  body.appendChild(linkBox);
+
+  const codeBox = document.createElement("div"); codeBox.className = "share-block";
+  const codeLabel = document.createElement("label"); codeLabel.className = "share-block__label"; codeLabel.textContent = "Raw share code";
+  const codeRow = document.createElement("div"); codeRow.className = "share-block__row";
+  const codeInput = document.createElement("textarea"); codeInput.className = "share-block__input share-block__input--code"; codeInput.readOnly = true; codeInput.rows = 3;
+  const codeCopy = document.createElement("button"); codeCopy.type = "button"; codeCopy.className = "btn"; codeCopy.textContent = "Copy code";
+  codeRow.append(codeInput, codeCopy);
+  codeBox.append(codeLabel, codeRow);
+  body.appendChild(codeBox);
+
+  const actions = document.createElement("div"); actions.className = "modal__actions";
+  const closeBottom = document.createElement("button");
+  closeBottom.type = "button"; closeBottom.className = "btn"; closeBottom.textContent = "Done";
+  actions.appendChild(closeBottom);
+  body.appendChild(actions);
+
+  const { close } = mountDialog(body);
+  closeBtn.addEventListener("click", close);
+  closeBottom.addEventListener("click", close);
+
+  if (state.known.size === 0) {
+    sub.textContent = "You haven’t marked any formulas as known yet. Star items in the table, then come back here to share.";
+    linkInput.value = ""; codeInput.value = "";
+    linkCopy.disabled = true; codeCopy.disabled = true;
+  } else {
+    sub.textContent = `Encoding ${state.known.size} known formula${state.known.size === 1 ? "" : "s"}. Anyone opening the link will be offered to merge or replace their list.`;
+    const code = encodeKnown(state.known, indices.indexOfId);
+    codeInput.value = code;
+    linkInput.value = buildShareUrl(code);
+  }
+
+  async function doCopy(el, btn, originalLabel) {
+    if (!el.value) return;
+    try {
+      if (navigator.clipboard?.writeText) await navigator.clipboard.writeText(el.value);
+      else { el.select(); document.execCommand("copy"); }
+      btn.textContent = "Copied!"; btn.classList.add("is-success");
+    } catch {
+      btn.textContent = "Copy failed"; btn.classList.add("is-error");
+    } finally {
+      setTimeout(() => { btn.textContent = originalLabel; btn.classList.remove("is-success", "is-error"); }, 1400);
+    }
+  }
+  linkCopy.addEventListener("click", () => doCopy(linkInput, linkCopy, "Copy link"));
+  codeCopy.addEventListener("click", () => doCopy(codeInput, codeCopy, "Copy code"));
+}
+function openImportModal(indices, { incomingCode = "" } = {}) {
+  return new Promise((resolve) => {
+    const body = document.createElement("div"); body.className = "modal__card";
+    const { head, closeBtn } = makeHead("Import known formulas");
+    body.appendChild(head);
+
+    const sub = document.createElement("p"); sub.className = "modal__lede";
+    sub.textContent = incomingCode
+      ? "A share code was found in your URL. Decode it below, then choose how to apply it to your current list."
+      : "Paste a share code or share-link URL below, then choose how to apply it.";
+    body.appendChild(sub);
+
+    const box = document.createElement("div"); box.className = "share-block";
+    const label = document.createElement("label"); label.className = "share-block__label"; label.textContent = "Share code or link";
+    const ta = document.createElement("textarea"); ta.className = "share-block__input share-block__input--code";
+    ta.rows = 4; ta.value = incomingCode; ta.placeholder = "Paste here…";
+    box.append(label, ta);
+    body.appendChild(box);
+
+    const status = document.createElement("p"); status.className = "modal__status";
+    body.appendChild(status);
+
+    const actions = document.createElement("div"); actions.className = "modal__actions";
+    const cancel  = document.createElement("button"); cancel.type  = "button"; cancel.className  = "btn";              cancel.textContent  = "Cancel";
+    const replace = document.createElement("button"); replace.type = "button"; replace.className = "btn btn--danger";  replace.textContent = "Replace current";
+    const merge   = document.createElement("button"); merge.type   = "button"; merge.className   = "btn btn--primary"; merge.textContent   = "Merge into current";
+    actions.append(cancel, replace, merge);
+    body.appendChild(actions);
+
+    const { close } = mountDialog(body);
+    let resolved = false;
+    const settle = (result) => { if (resolved) return; resolved = true; close(); resolve(result); };
+    closeBtn.addEventListener("click", () => settle({ action: "cancel" }));
+    cancel.addEventListener("click",  () => settle({ action: "cancel" }));
+
+    let lastDecoded = null;
+    function recompute() {
+      const raw = ta.value.trim();
+      lastDecoded = null;
+      if (!raw) {
+        status.textContent = "Awaiting paste.";
+        status.classList.remove("is-error", "is-success");
+        merge.disabled = true; replace.disabled = true;
+        return;
+      }
+      let code = raw;
+      const hashIdx = code.indexOf(HASH_PREFIX);
+      if (hashIdx >= 0) code = code.slice(hashIdx + HASH_PREFIX.length);
+      try {
+        const set = decodeKnown(code, indices.byIndex);
+        lastDecoded = set;
+        const cur = state.known.size;
+        const adds = [...set].filter((id) => !state.known.has(id)).length;
+        status.innerHTML = `<strong>${set.size}</strong> formula${set.size === 1 ? "" : "s"} decoded.&nbsp;Merge → ${cur + adds} total · Replace → ${set.size} total.`;
+        status.classList.remove("is-error"); status.classList.add("is-success");
+        merge.disabled = false; replace.disabled = false;
+      } catch (e) {
+        status.textContent = `Invalid share code: ${e.message}`;
+        status.classList.add("is-error"); status.classList.remove("is-success");
+        merge.disabled = true; replace.disabled = true;
+      }
+    }
+    ta.addEventListener("input", recompute);
+    recompute();
+    merge.addEventListener("click",   () => { if (lastDecoded) settle({ action: "merge",   set: lastDecoded }); });
+    replace.addEventListener("click", () => { if (lastDecoded) settle({ action: "replace", set: lastDecoded }); });
+  });
+}
+async function runImport(indices, opts) {
+  const result = await openImportModal(indices, opts);
+  if (result.action === "merge")   mergeKnown(result.set);
+  if (result.action === "replace") replaceKnown(result.set);
+  return result;
+}
+
+/* ═══════════════════════ Toolbar ═══════════════════════ */
+function renderToolbar(mount, indices) {
+  const bar = document.createElement("div");
+  bar.className = "toolbar";
+
+  const search = document.createElement("label");
+  search.className = "search";
+  search.innerHTML = `<svg class="search__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg>`;
+  const input = document.createElement("input");
+  input.type = "search"; input.className = "search__input";
+  input.placeholder = "Search by name or trait…";
+  input.setAttribute("aria-label", "Search alchemical items");
+  input.value = state.query;
+  const clear = document.createElement("button");
+  clear.type = "button"; clear.className = "search__clear"; clear.textContent = "✕";
+  clear.setAttribute("aria-label", "Clear search"); clear.hidden = !state.query;
+  search.append(input, clear);
+
+  let debounceId = null;
+  input.addEventListener("input", () => {
+    clearTimeout(debounceId);
+    debounceId = setTimeout(() => { setQuery(input.value); clear.hidden = !input.value; }, 80);
+  });
+  clear.addEventListener("click", () => {
+    input.value = ""; setQuery(""); clear.hidden = true; input.focus();
+  });
+
+  const count = document.createElement("div");
+  count.className = "count"; count.dataset.role = "count";
+
+  const importBtn = document.createElement("button");
+  importBtn.type = "button"; importBtn.className = "btn";
+  importBtn.dataset.role = "import"; importBtn.textContent = "Import";
+  importBtn.title = "Paste a share code to load someone else's known formulas";
+  importBtn.addEventListener("click", () => runImport(indices));
+
+  const exportBtn = document.createElement("button");
+  exportBtn.type = "button"; exportBtn.className = "btn";
+  exportBtn.dataset.role = "export"; exportBtn.textContent = "Export";
+  exportBtn.title = "Copy a share link of your known formulas";
+  exportBtn.addEventListener("click", () => openExportModal(indices));
+
+  function refreshExportEnabled() {
+    exportBtn.disabled = state.known.size === 0;
+    exportBtn.classList.toggle("is-disabled", state.known.size === 0);
+  }
+  refreshExportEnabled();
+  subscribe(refreshExportEnabled);
+
+  const actions = document.createElement("div");
+  actions.className = "toolbar__actions";
+  actions.append(count, importBtn, exportBtn);
+  bar.append(search, actions);
+  mount.appendChild(bar);
+
+  return { setCount(visible, total) { count.innerHTML = `<strong>${visible}</strong> of ${total} items`; } };
+}
+
+/* ═══════════════════════ Filters ═══════════════════════ */
+const SUBTYPE_ORDER = ["bomb","elixir","mutagen","poison","oil","drug","ammunition","potion","tool","catalyst","weapon","armor","shield","other"];
+const RARITY_ORDER_LIST = ["common","uncommon","rare","unique"];
+const DAMAGE_ORDER = ["acid","cold","electricity","fire","force","mental","physical","poison","sonic","vitality","void","bleed"];
+
+function makeChip(label, count, { active, accentKey, accentVal, onClick }) {
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "chip" + (active ? " is-active" : "");
+  if (accentKey) btn.dataset[accentKey] = accentVal;
+  btn.textContent = label;
+  if (count != null) {
+    const span = document.createElement("span");
+    span.className = "chip__count"; span.textContent = String(count);
+    btn.appendChild(span);
+  }
+  btn.addEventListener("click", onClick);
+  return btn;
+}
+function makeFilterRow(label) {
+  const row = document.createElement("div");
+  row.className = "filter-row";
+  const lbl = document.createElement("div");
+  lbl.className = "filter-row__label"; lbl.textContent = label;
+  row.appendChild(lbl);
+  return row;
+}
+function renderFilters(mount, indices) {
+  const bar = document.createElement("div");
+  bar.className = "filter-bar";
+
+  const subtypeRow = makeFilterRow("Type");
+  for (const s of SUBTYPE_ORDER) {
+    const count = indices.bySubtype.get(s);
+    if (!count) continue;
+    subtypeRow.appendChild(makeChip(cap(s), count, { active: state.subtypes.has(s), accentKey: "subtype", accentVal: s, onClick: () => toggleSubtype(s) }));
+  }
+  bar.appendChild(subtypeRow);
+
+  const rarityRow = makeFilterRow("Rarity");
+  for (const r of RARITY_ORDER_LIST) {
+    const count = indices.byRarity.get(r);
+    if (!count) continue;
+    rarityRow.appendChild(makeChip(cap(r), count, { active: state.rarities.has(r), accentKey: "rarity", accentVal: r, onClick: () => toggleRarity(r) }));
+  }
+  bar.appendChild(rarityRow);
+
+  const damageRow = makeFilterRow("Damage");
+  for (const d of DAMAGE_ORDER) {
+    const count = indices.byDamage.get(d);
+    if (!count) continue;
+    damageRow.appendChild(makeChip(cap(d), count, { active: state.damages.has(d), accentKey: "damage", accentVal: d, onClick: () => toggleDamage(d) }));
+  }
+  bar.appendChild(damageRow);
+
+  const levelRow = makeFilterRow("Level");
+  const range = document.createElement("div"); range.className = "range";
+  const minIn = document.createElement("input"), maxIn = document.createElement("input");
+  for (const inp of [minIn, maxIn]) {
+    inp.type = "number"; inp.min = "0"; inp.max = String(indices.maxLevel);
+    inp.className = "range__input"; inp.inputMode = "numeric";
+  }
+  minIn.value = state.levelMin; maxIn.value = state.levelMax;
+  minIn.setAttribute("aria-label", "Minimum level");
+  maxIn.setAttribute("aria-label", "Maximum level");
+  const sep = document.createElement("span"); sep.className = "range__sep"; sep.textContent = "–";
+  range.append(minIn, sep, maxIn);
+  levelRow.appendChild(range);
+
+  function commitRange() {
+    let lo = Number(minIn.value), hi = Number(maxIn.value);
+    if (!Number.isFinite(lo)) lo = 0;
+    if (!Number.isFinite(hi)) hi = indices.maxLevel;
+    lo = Math.max(0, Math.min(indices.maxLevel, lo));
+    hi = Math.max(0, Math.min(indices.maxLevel, hi));
+    if (lo > hi) [lo, hi] = [hi, lo];
+    minIn.value = lo; maxIn.value = hi;
+    setLevelRange(lo, hi);
+  }
+  minIn.addEventListener("change", commitRange);
+  maxIn.addEventListener("change", commitRange);
+
+  const reset = document.createElement("button");
+  reset.type = "button"; reset.className = "btn"; reset.textContent = "Clear filters";
+  reset.addEventListener("click", () => {
+    resetFilters();
+    minIn.value = 0; maxIn.value = indices.maxLevel;
+  });
+  levelRow.appendChild(reset);
+
+  const knownBtn = document.createElement("button");
+  knownBtn.type = "button";
+  knownBtn.className = "btn" + (state.showKnownOnly ? " is-active" : "");
+  knownBtn.textContent = "★ Known only";
+  knownBtn.addEventListener("click", () => toggleShowKnownOnly());
+  levelRow.appendChild(knownBtn);
+  bar.appendChild(levelRow);
+
+  subscribe((s) => {
+    for (const el of bar.querySelectorAll(".chip[data-subtype]")) el.classList.toggle("is-active", s.subtypes.has(el.dataset.subtype));
+    for (const el of bar.querySelectorAll(".chip[data-rarity]"))  el.classList.toggle("is-active", s.rarities.has(el.dataset.rarity));
+    for (const el of bar.querySelectorAll(".chip[data-damage]"))  el.classList.toggle("is-active", s.damages.has(el.dataset.damage));
+    knownBtn.classList.toggle("is-active", s.showKnownOnly);
+    if (Number(minIn.value) !== s.levelMin) minIn.value = s.levelMin;
+    if (Number(maxIn.value) !== s.levelMax) maxIn.value = s.levelMax;
+  });
+
+  mount.appendChild(bar);
+}
+
+/* ═══════════════════════ Table ═══════════════════════ */
+const COLUMNS = [
+  { key: "_star",   label: "",       sortable: false, klass: "col-star"    },
+  { key: "_open",   label: "",       sortable: false, klass: "col-open"    },
+  { key: "name",    label: "Name",   sortable: true,  klass: "col-name"    },
+  { key: "subtype", label: "Type",   sortable: true,  klass: "col-subtype" },
+  { key: "level",   label: "Lvl",    sortable: true,  klass: "col-level"   },
+  { key: "rarity",  label: "Rarity", sortable: true,  klass: "col-rarity"  },
+  { key: "damage",  label: "Damage", sortable: true,  klass: "col-damage"  },
+  { key: "price",   label: "Price",  sortable: true,  klass: "col-price"   },
+  { key: "bulk",    label: "Bulk",   sortable: false, klass: "col-bulk"    },
+  { key: "traits",  label: "Traits", sortable: false, klass: "col-traits"  },
+];
+const rowIndex = new Map();
+
+function renderTable(mount, items, onVisibleChange) {
+  const wrap = document.createElement("div");
+  wrap.className = "table-wrap";
+  const table = document.createElement("table");
+  table.className = "table";
+
+  const thead = document.createElement("thead");
+  const headRow = document.createElement("tr");
+  for (const col of COLUMNS) {
+    const th = document.createElement("th");
+    th.className = col.klass;
+    th.textContent = col.label;
+    if (col.sortable) {
+      th.dataset.sortKey = col.key;
+      th.addEventListener("click", () => setSort(col.key));
+    } else {
+      th.setAttribute("data-sort-disabled", "");
+    }
+    headRow.appendChild(th);
+  }
+  thead.appendChild(headRow);
+  table.appendChild(thead);
+
+  const tbody = document.createElement("tbody");
+  for (const it of items) {
+    const { row, detailRow } = renderRow(it);
+    tbody.appendChild(row);
+    tbody.appendChild(detailRow);
+    rowIndex.set(it.id, { row, detailRow, item: it });
+  }
+  table.appendChild(tbody);
+
+  const empty = document.createElement("div");
+  empty.className = "empty"; empty.hidden = true;
+  empty.innerHTML = `<strong>No items match these filters.</strong>Try clearing rarity, type, or the search query.`;
+
+  wrap.appendChild(table);
+  wrap.appendChild(empty);
+  mount.appendChild(wrap);
+
+  reorder(tbody, items);
+  applySort(thead);
+  refreshVisibility(items, empty, onVisibleChange);
+
+  let lastSortKey = state.sortKey, lastSortDir = state.sortDir;
+  subscribe((s) => {
+    if (s.sortKey !== lastSortKey || s.sortDir !== lastSortDir) {
+      reorder(tbody, items);
+      applySort(thead);
+      lastSortKey = s.sortKey;
+      lastSortDir = s.sortDir;
+    }
+    refreshVisibility(items, empty, onVisibleChange);
+    syncOpenRow();
+    syncKnownStars();
+  });
+}
+function renderRow(it) {
+  const row = document.createElement("tr");
+  row.className = "row"; row.dataset.id = it.id;
+
+  const tdStar = document.createElement("td"); tdStar.className = "col-star";
+  const star = document.createElement("button");
+  star.type = "button";
+  star.className = "star" + (state.known.has(it.id) ? " is-on" : "");
+  star.textContent = state.known.has(it.id) ? "★" : "☆";
+  star.setAttribute("aria-label", "Toggle known formula");
+  star.addEventListener("click", (e) => { e.stopPropagation(); toggleKnown(it.id); });
+  tdStar.appendChild(star);
+  row.appendChild(tdStar);
+
+  const tdOpen = document.createElement("td"); tdOpen.className = "col-open";
+  const chev = document.createElement("span"); chev.className = "row__expand";
+  chev.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg>`;
+  tdOpen.appendChild(chev);
+  row.appendChild(tdOpen);
+
+  const tdName = document.createElement("td"); tdName.className = "col-name row__name";
+  const baseSpan = document.createElement("span"); baseSpan.className = "row__name-base"; baseSpan.textContent = it.base;
+  tdName.appendChild(baseSpan);
+  if (it.grade) {
+    const gradeSpan = document.createElement("span");
+    gradeSpan.className = "row__name-grade"; gradeSpan.textContent = `(${it.grade})`;
+    tdName.appendChild(gradeSpan);
+  }
+  row.appendChild(tdName);
+
+  const tdType = document.createElement("td"); tdType.className = "col-subtype";
+  const typeTag = document.createElement("span"); typeTag.className = "tag"; typeTag.dataset.subtype = it.subtype; typeTag.textContent = it.subtypeLabel;
+  tdType.appendChild(typeTag);
+  row.appendChild(tdType);
+
+  const tdLvl = document.createElement("td"); tdLvl.className = "col-level cell-level"; tdLvl.textContent = it.level;
+  row.appendChild(tdLvl);
+
+  const tdRar = document.createElement("td"); tdRar.className = "col-rarity";
+  const rarSpan = document.createElement("span"); rarSpan.className = "rarity"; rarSpan.dataset.rarity = it.rarity; rarSpan.textContent = it.rarity;
+  tdRar.appendChild(rarSpan);
+  row.appendChild(tdRar);
+
+  const tdDmg = document.createElement("td"); tdDmg.className = "col-damage";
+  if (it.damageType) {
+    const dmgTag = document.createElement("span");
+    dmgTag.className = "tag"; dmgTag.dataset.damage = it.damageType; dmgTag.textContent = cap(it.damageType);
+    tdDmg.appendChild(dmgTag);
+  } else {
+    tdDmg.textContent = "—"; tdDmg.style.color = "var(--fg-dim)";
+  }
+  row.appendChild(tdDmg);
+
+  const tdPrice = document.createElement("td"); tdPrice.className = "col-price cell-price"; tdPrice.textContent = it.priceText;
+  row.appendChild(tdPrice);
+
+  const tdBulk = document.createElement("td"); tdBulk.className = "col-bulk cell-bulk"; tdBulk.textContent = it.bulk;
+  row.appendChild(tdBulk);
+
+  const tdTraits = document.createElement("td"); tdTraits.className = "col-traits";
+  const traitsSpan = document.createElement("span"); traitsSpan.className = "traits-inline";
+  traitsSpan.textContent = it.traits.filter((t) => t !== "alchemical").map(traitPill).join(", ");
+  traitsSpan.title = traitsSpan.textContent;
+  tdTraits.appendChild(traitsSpan);
+  row.appendChild(tdTraits);
+
+  row.addEventListener("click", () => setOpenId(state.openId === it.id ? null : it.id));
+
+  const detailRow = document.createElement("tr");
+  detailRow.className = "detail-row";
+  const detailTd = document.createElement("td");
+  detailTd.colSpan = COLUMNS.length;
+  detailTd.appendChild(renderDetail(it));
+  detailRow.appendChild(detailTd);
+  return { row, detailRow };
+}
+function renderDetail(it) {
+  const wrap = document.createElement("div"); wrap.className = "detail";
+  const body = document.createElement("div"); body.className = "detail__body";
+  body.innerHTML = it.description || "<p><em>No description.</em></p>";
+  wrap.appendChild(body);
+
+  const meta = document.createElement("dl"); meta.className = "detail__meta";
+  const addMetaRow = (label, value) => {
+    if (value == null || value === "" || value === "—") return;
+    const r = document.createElement("div"); r.className = "detail__meta-row";
+    const dt = document.createElement("dt"); dt.textContent = label;
+    const dd = document.createElement("dd");
+    if (value instanceof Node) dd.appendChild(value); else dd.textContent = value;
+    r.append(dt, dd);
+    meta.appendChild(r);
+  };
+  addMetaRow("Item", `Level ${it.level} ${it.subtypeLabel}`);
+  addMetaRow("Source", it.source);
+  if (it.bombDamage)  addMetaRow("Damage", it.bombDamage);
+  if (it.stages)      addMetaRow("Stages", it.stages);
+  if (it.onset)       addMetaRow("Onset", it.onset);
+  if (it.maxDuration) addMetaRow("Duration", it.maxDuration);
+  addMetaRow("Price", it.priceText);
+  addMetaRow("Bulk", it.bulk);
+  if (it.usage) addMetaRow("Usage", it.usage.replace(/-/g, " "));
+
+  const traitsToShow = it.traits.filter((t) => t !== "alchemical");
+  if (traitsToShow.length) {
+    const traitsWrap = document.createElement("div"); traitsWrap.className = "detail__traits";
+    for (const t of traitsToShow) {
+      const pill = document.createElement("span");
+      pill.className = "detail__trait-pill"; pill.textContent = traitPill(t);
+      traitsWrap.appendChild(pill);
+    }
+    addMetaRow("Traits", traitsWrap);
+  }
+  if (it.url) {
+    const a = document.createElement("a");
+    a.href = it.url; a.target = "_blank"; a.rel = "external noopener";
+    a.textContent = "View on Archives of Nethys ↗";
+    addMetaRow("Reference", a);
+  }
+  wrap.appendChild(meta);
+  return wrap;
+}
+function applySort(thead) {
+  for (const th of thead.querySelectorAll("th")) {
+    if (th.dataset.sortKey === state.sortKey) {
+      th.setAttribute("aria-sort", state.sortDir === "asc" ? "ascending" : "descending");
+    } else {
+      th.removeAttribute("aria-sort");
+    }
+  }
+}
+function reorder(tbody, items) {
+  const sorted = sortItems(items, state.sortKey, state.sortDir);
+  const frag = document.createDocumentFragment();
+  for (const it of sorted) {
+    const e = rowIndex.get(it.id);
+    if (!e) continue;
+    frag.appendChild(e.row);
+    frag.appendChild(e.detailRow);
+  }
+  tbody.replaceChildren(frag);
+}
+function matches(it, s) {
+  if (s.subtypes.size && !s.subtypes.has(it.subtype)) return false;
+  if (s.rarities.size && !s.rarities.has(it.rarity)) return false;
+  if (s.damages.size && (!it.damageType || !s.damages.has(it.damageType))) return false;
+  if (it.level < s.levelMin || it.level > s.levelMax) return false;
+  if (s.showKnownOnly && !s.known.has(it.id)) return false;
+  if (s.query) {
+    const q = s.query.toLowerCase();
+    const hay = it.name.toLowerCase() + " " + it.traits.join(" ");
+    if (!hay.includes(q)) return false;
+  }
+  return true;
+}
+function refreshVisibility(items, emptyEl, onVisibleChange) {
+  let visible = 0;
+  for (const it of items) {
+    const e = rowIndex.get(it.id);
+    if (!e) continue;
+    const ok = matches(it, state);
+    e.row.hidden = !ok;
+    e.detailRow.hidden = !ok;
+    if (ok) visible++;
+  }
+  emptyEl.hidden = visible > 0;
+  onVisibleChange?.(visible, items.length);
+}
+function syncOpenRow() {
+  for (const { row } of rowIndex.values()) {
+    row.classList.toggle("is-open", row.dataset.id === state.openId);
+  }
+}
+function syncKnownStars() {
+  for (const { row, item } of rowIndex.values()) {
+    const star = row.querySelector(".star");
+    if (!star) continue;
+    const on = state.known.has(item.id);
+    star.classList.toggle("is-on", on);
+    star.textContent = on ? "★" : "☆";
+    row.classList.toggle("is-known", on);
+  }
+}
+
+/* ═══════════════════════ Entry point ═══════════════════════ */
+async function main() {
+  const root = document.getElementById("app");
+  if (!root) return;
+  root.innerHTML = `<p class="empty">Loading alchemical reagents…</p>`;
+  let items;
+  try {
+    items = await loadItems();
+  } catch (err) {
+    console.error(err);
+    root.innerHTML = `<div class="empty"><strong>Failed to load data.</strong>${err.message ?? "Unknown error"}</div>`;
+    return;
+  }
+  const indices = buildIndices(items);
+  hydrate(indices.maxLevel);
+
+  root.innerHTML = "";
+  const toolbar = renderToolbar(root, indices);
+  renderFilters(root, indices);
+  renderTable(root, items, (visible, total) => toolbar.setCount(visible, total));
+
+  const incoming = takeHashCode();
+  if (incoming) runImport(indices, { incomingCode: incoming });
+}
+main();
+})();
+    </script>
+  </body>
+</html>

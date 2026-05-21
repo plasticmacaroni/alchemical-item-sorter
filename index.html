@@ -11,7 +11,7 @@
     <script
       id="items-data"
       type="application/json"
-      data-src="./assets/items.8e8076c0.json"
+      data-src="./assets/items.75d7461b.json"
     ></script>
     <style>
       /* ─── Tokens ─── */
@@ -37,6 +37,12 @@
         --rarity-rare-glow: rgba(79, 135, 216, 0.4);
         --rarity-unique: #b966d4;
         --rarity-unique-glow: rgba(185, 102, 212, 0.4);
+
+        /* "Known formula" affordance — warm parchment/amber, distinct from accent. */
+        --known: #e6b96b;
+        --known-hi: #f5d693;
+        --known-glow: rgba(230, 185, 107, 0.4);
+        --known-tint: rgba(230, 185, 107, 0.08);
 
         --type-bomb: #e06464;
         --type-elixir: #5cb6e0;
@@ -110,14 +116,21 @@
       :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
       /* ─── Header ─── */
-      .app-header { padding: var(--space-6) var(--space-6) var(--space-4); max-width: 1400px; margin: 0 auto; }
+      .app-header {
+        padding: var(--space-8) var(--space-6) var(--space-4);
+        max-width: 1400px; margin: 0 auto;
+        display: flex; align-items: baseline; gap: var(--space-4); flex-wrap: wrap;
+      }
       .app-header__title {
-        font-size: 1.875rem; font-weight: 700; letter-spacing: -0.01em;
-        margin: 0 0 var(--space-1);
-        background: linear-gradient(120deg, #d4b8ff 0%, #5cb6e0 50%, #69c878 100%);
+        font-size: 2.25rem; font-weight: 700; letter-spacing: -0.015em; line-height: 1.1;
+        margin: 0;
+        background: linear-gradient(120deg, #f5d693 0%, #d4b8ff 40%, #5cb6e0 75%, #69c878 100%);
         -webkit-background-clip: text; background-clip: text; color: transparent;
       }
-      .app-header__subtitle { margin: 0; color: var(--fg-muted); font-size: 0.95rem; }
+      .app-header__subtitle {
+        margin: 0; color: var(--fg-muted); font-size: 0.95rem;
+        padding-bottom: 6px;
+      }
 
       /* ─── App layout ─── */
       #app { max-width: 1400px; margin: 0 auto; padding: 0 var(--space-6) var(--space-8); }
@@ -152,6 +165,10 @@
       .btn.is-active {
         background: color-mix(in srgb, var(--accent) 22%, var(--bg-2));
         border-color: var(--accent); color: var(--accent-hi);
+      }
+      .btn--known-only.is-active {
+        background: color-mix(in srgb, var(--known) 24%, var(--bg-2));
+        border-color: var(--known); color: var(--known-hi);
       }
 
       .count { color: var(--fg-muted); font-size: 0.85rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
@@ -242,23 +259,93 @@
       .table thead th[data-sort-disabled] { cursor: default; }
       .table thead th[data-sort-disabled]:hover { color: var(--fg-muted); }
 
-      .row { border-bottom: 1px solid var(--border); transition: background var(--motion-fast); }
+      .row { border-bottom: 1px solid var(--border); transition: background var(--motion-fast), box-shadow var(--motion-fast); }
       .row:hover { background: var(--bg-2); }
       .row td { padding: var(--space-3) var(--space-3); vertical-align: middle; }
-      .row.is-known { background: color-mix(in srgb, var(--accent) 8%, transparent); }
-      .row.is-known:hover { background: color-mix(in srgb, var(--accent) 14%, transparent); }
-
-      .star {
-        font-size: 1.1rem; color: var(--fg-dim); padding: 4px;
-        border-radius: var(--radius-sm); line-height: 1;
-        transition: color var(--motion-fast), transform var(--motion-fast);
+      /* Known rows get a warm parchment tint + amber left edge. */
+      .row.is-known {
+        background: var(--known-tint);
+        box-shadow: inset 3px 0 0 var(--known);
       }
-      .star:hover { color: var(--rarity-uncommon); transform: scale(1.1); }
-      .star.is-on { color: var(--rarity-uncommon); }
+      .row.is-known:hover { background: color-mix(in srgb, var(--known) 12%, transparent); }
 
+      /* ─── "Known formula" toggle (replaces the star) ─── */
+      .known-toggle {
+        width: 30px; height: 30px;
+        color: var(--fg-dim);
+        border-radius: var(--radius-sm);
+        display: inline-flex; align-items: center; justify-content: center;
+        position: relative;
+        transition: color var(--motion-fast), transform var(--motion-fast), background var(--motion-fast);
+      }
+      .known-toggle:hover {
+        color: var(--known);
+        transform: scale(1.08);
+        background: rgba(230, 185, 107, 0.08);
+      }
+      .known-toggle__icon { width: 18px; height: 18px; }
+      .known-toggle__book {
+        fill: none; stroke: currentColor; stroke-width: 1.6;
+        stroke-linecap: round; stroke-linejoin: round;
+        transition: fill var(--motion);
+      }
+      .known-toggle__line { stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; }
+      .known-toggle__check {
+        fill: none; stroke: currentColor; stroke-width: 2.4;
+        stroke-linecap: round; stroke-linejoin: round;
+        opacity: 0; transform-origin: 12px 14px; transform: scale(0.6);
+        transition: opacity var(--motion), transform var(--motion);
+      }
+      .known-toggle__lines { opacity: 1; transition: opacity var(--motion-fast); }
+      .known-toggle.is-on { color: var(--known); }
+      .known-toggle.is-on .known-toggle__book {
+        fill: color-mix(in srgb, var(--known) 22%, transparent);
+        filter: drop-shadow(0 0 6px var(--known-glow));
+      }
+      .known-toggle.is-on .known-toggle__check { opacity: 1; transform: scale(1); }
+      .known-toggle.is-on .known-toggle__lines { opacity: 0; }
+
+      /* ─── Name cell with item icon ─── */
       .row__name { font-weight: 500; color: var(--fg); }
-      .row__name-base { color: var(--fg); }
-      .row__name-grade { color: var(--fg-dim); font-weight: 400; font-size: 0.85rem; margin-left: 4px; }
+      .row__name-cell { display: flex; align-items: center; gap: var(--space-3); }
+      .row__name-text { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; }
+      .row__name-base { color: var(--fg); font-weight: 500; }
+      .row__name-grade {
+        color: var(--fg-dim); font-weight: 400; font-size: 0.78rem;
+        margin-top: 1px; letter-spacing: 0.01em;
+      }
+
+      .row__icon {
+        width: 38px; height: 38px; flex: 0 0 38px;
+        border-radius: var(--radius);
+        background:
+          radial-gradient(circle at 30% 25%, color-mix(in srgb, var(--icon-tint, var(--fg-dim)) 22%, transparent), transparent 65%),
+          color-mix(in srgb, var(--icon-tint, var(--fg-dim)) 10%, var(--bg-2));
+        border: 1px solid color-mix(in srgb, var(--icon-tint, var(--fg-dim)) 30%, transparent);
+        display: inline-flex; align-items: center; justify-content: center;
+        overflow: hidden;
+        transition: border-color var(--motion-fast), transform var(--motion-fast);
+      }
+      .row:hover .row__icon { border-color: color-mix(in srgb, var(--icon-tint, var(--fg-dim)) 55%, transparent); }
+      .row__icon img { width: 100%; height: 100%; object-fit: contain; }
+      .row__icon-glyph {
+        width: 22px; height: 22px;
+        color: color-mix(in srgb, var(--icon-tint, var(--fg-dim)) 90%, var(--fg));
+      }
+      .row__icon[data-subtype="bomb"]       { --icon-tint: var(--type-bomb);       }
+      .row__icon[data-subtype="elixir"]     { --icon-tint: var(--type-elixir);     }
+      .row__icon[data-subtype="mutagen"]    { --icon-tint: var(--type-mutagen);    }
+      .row__icon[data-subtype="poison"]     { --icon-tint: var(--type-poison);     }
+      .row__icon[data-subtype="oil"]        { --icon-tint: var(--type-oil);        }
+      .row__icon[data-subtype="drug"]       { --icon-tint: var(--type-drug);       }
+      .row__icon[data-subtype="ammunition"] { --icon-tint: var(--type-ammunition); }
+      .row__icon[data-subtype="potion"]     { --icon-tint: var(--type-potion);     }
+      .row__icon[data-subtype="catalyst"]   { --icon-tint: var(--type-catalyst);   }
+      .row__icon[data-subtype="tool"]       { --icon-tint: var(--type-tool);       }
+      .row__icon[data-subtype="weapon"]     { --icon-tint: var(--type-weapon);     }
+      .row__icon[data-subtype="armor"]      { --icon-tint: var(--type-armor);      }
+      .row__icon[data-subtype="shield"]     { --icon-tint: var(--type-shield);     }
+      .row__icon[data-subtype="other"]      { --icon-tint: var(--type-other);      }
 
       .tag {
         display: inline-block; padding: 2px 8px; border-radius: 999px;
@@ -329,7 +416,41 @@
       .detail-row { display: none; background: var(--bg-2); }
       .row.is-open + .detail-row { display: table-row; }
       .detail-row td { padding: var(--space-4) var(--space-6) var(--space-6); border-bottom: 1px solid var(--border); }
-      .detail { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--space-4) var(--space-6); color: var(--fg); }
+      .detail {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        gap: var(--space-4) var(--space-6); color: var(--fg);
+        align-items: start;
+      }
+      .detail__icon {
+        width: 96px; height: 96px; flex: 0 0 96px;
+        border-radius: var(--radius-lg);
+        background:
+          radial-gradient(circle at 30% 25%, color-mix(in srgb, var(--icon-tint, var(--fg-dim)) 28%, transparent), transparent 65%),
+          color-mix(in srgb, var(--icon-tint, var(--fg-dim)) 12%, var(--bg-1));
+        border: 1px solid color-mix(in srgb, var(--icon-tint, var(--fg-dim)) 38%, transparent);
+        display: inline-flex; align-items: center; justify-content: center;
+        overflow: hidden;
+        box-shadow:
+          0 0 24px color-mix(in srgb, var(--icon-tint, var(--fg-dim)) 18%, transparent),
+          inset 0 0 12px color-mix(in srgb, var(--icon-tint, var(--fg-dim)) 8%, transparent);
+      }
+      .detail__icon img { width: 84%; height: 84%; object-fit: contain; }
+      .detail__icon-glyph { width: 52px; height: 52px; color: color-mix(in srgb, var(--icon-tint, var(--fg-dim)) 90%, var(--fg)); }
+      .detail__icon[data-subtype="bomb"]       { --icon-tint: var(--type-bomb);       }
+      .detail__icon[data-subtype="elixir"]     { --icon-tint: var(--type-elixir);     }
+      .detail__icon[data-subtype="mutagen"]    { --icon-tint: var(--type-mutagen);    }
+      .detail__icon[data-subtype="poison"]     { --icon-tint: var(--type-poison);     }
+      .detail__icon[data-subtype="oil"]        { --icon-tint: var(--type-oil);        }
+      .detail__icon[data-subtype="drug"]       { --icon-tint: var(--type-drug);       }
+      .detail__icon[data-subtype="ammunition"] { --icon-tint: var(--type-ammunition); }
+      .detail__icon[data-subtype="potion"]     { --icon-tint: var(--type-potion);     }
+      .detail__icon[data-subtype="catalyst"]   { --icon-tint: var(--type-catalyst);   }
+      .detail__icon[data-subtype="tool"]       { --icon-tint: var(--type-tool);       }
+      .detail__icon[data-subtype="weapon"]     { --icon-tint: var(--type-weapon);     }
+      .detail__icon[data-subtype="armor"]      { --icon-tint: var(--type-armor);      }
+      .detail__icon[data-subtype="shield"]     { --icon-tint: var(--type-shield);     }
+      .detail__icon[data-subtype="other"]      { --icon-tint: var(--type-other);      }
       .detail__body { line-height: 1.55; }
       .detail__body p { margin: 0 0 var(--space-3); }
       .detail__body p:last-child { margin-bottom: 0; }
@@ -427,6 +548,11 @@
         .table th.col-traits, .table td.col-traits { display: none; }
         .table th.col-bulk, .table td.col-bulk { display: none; }
         .table th.col-price, .table td.col-price { display: none; }
+        .detail {
+          grid-template-columns: 1fr;
+        }
+        .detail__icon { justify-self: center; }
+        .row__icon { width: 32px; height: 32px; flex-basis: 32px; }
       }
       @media (max-width: 500px) {
         .table th.col-damage, .table td.col-damage { display: none; }
@@ -449,7 +575,7 @@
         <a href="https://github.com/foundryvtt/pf2e" rel="external noopener" target="_blank">Foundry VTT PF2e module</a>.
         See <code>NOTICES</code> in the repo for full attribution.
       </p>
-      <p class="data-version" data-version="8e8076c0">Data version: 8e8076c0 (Foundry @4cbdaa37)</p>
+      <p class="data-version" data-version="75d7461b">Data version: 75d7461b (Foundry @4cbdaa37)</p>
     </footer>
 
     <script>
@@ -1059,8 +1185,9 @@ function renderFilters(mount, indices) {
 
   const knownBtn = document.createElement("button");
   knownBtn.type = "button";
-  knownBtn.className = "btn" + (state.showKnownOnly ? " is-active" : "");
-  knownBtn.textContent = "★ Known only";
+  knownBtn.className = "btn btn--known-only" + (state.showKnownOnly ? " is-active" : "");
+  knownBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align: -2px; margin-right: 6px;"><path d="M5 4a2 2 0 0 1 2-2h12v19H7a1.5 1.5 0 0 0-1.5 1.5V4z"/><path d="M8 12.5 11 15.5 16 9.5"/></svg>In formula book`;
+  knownBtn.title = "Show only formulas you've marked as known";
   knownBtn.addEventListener("click", () => toggleShowKnownOnly());
   levelRow.appendChild(knownBtn);
   bar.appendChild(levelRow);
@@ -1149,34 +1276,117 @@ function renderTable(mount, items, onVisibleChange) {
     syncKnownStars();
   });
 }
+// SVG markup for the formula-book "known" toggle. One static structure;
+// CSS toggles visibility of the inner lines vs the checkmark via .is-on.
+const KNOWN_TOGGLE_SVG = `
+  <svg class="known-toggle__icon" viewBox="0 0 24 24" aria-hidden="true">
+    <path class="known-toggle__book" d="M5 4a2 2 0 0 1 2-2h12v19H7a1.5 1.5 0 0 0-1.5 1.5V4z"/>
+    <g class="known-toggle__lines">
+      <line class="known-toggle__line" x1="8.5" y1="7.5" x2="15.5" y2="7.5"/>
+      <line class="known-toggle__line" x1="8.5" y1="10.5" x2="15.5" y2="10.5"/>
+      <line class="known-toggle__line" x1="8.5" y1="13.5" x2="13" y2="13.5"/>
+    </g>
+    <path class="known-toggle__check" d="M8 12.5 11 15.5 16 9.5"/>
+  </svg>`;
+
+// Subtype-themed fallback glyphs for items whose Foundry img path points at
+// the core Foundry icon set (which we don't ship). Each glyph is a clean
+// outline that inherits `currentColor` and gets tinted by the icon container.
+const FALLBACK_GLYPHS = {
+  bomb:       `<svg class="row__icon-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="15" r="6.5"/><path d="M16 9.5l2-2.5M17.5 6.5l2-1M18.5 8.5l2 .5"/></svg>`,
+  ammunition: `<svg class="row__icon-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l3 4v9.5a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1V7z"/><line x1="9" y1="11" x2="15" y2="11"/></svg>`,
+  weapon:     `<svg class="row__icon-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4.5L20 4l-.5 5.5-9 9-5-5z"/><path d="M5.5 18.5L3 21M9 14l1.5 1.5"/></svg>`,
+  armor:      `<svg class="row__icon-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v5c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z"/></svg>`,
+  shield:     `<svg class="row__icon-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v5c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z"/></svg>`,
+  tool:       `<svg class="row__icon-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3a4 4 0 0 1 5 5l7 7-3 3-7-7a4 4 0 0 1-5-5l3 3 2-2z"/></svg>`,
+  drug:       `<svg class="row__icon-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="9" width="18" height="6" rx="3"/><line x1="12" y1="9" x2="12" y2="15"/></svg>`,
+  ammunition2:`<svg class="row__icon-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"/></svg>`,
+  // Flask shape — used as default for elixir/mutagen/poison/oil/potion/catalyst/other.
+  _flask:     `<svg class="row__icon-glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 3h5M10 3v6.2l-4.5 8a2.5 2.5 0 0 0 2.2 3.8h8.6a2.5 2.5 0 0 0 2.2-3.8L14 9.2V3"/><path d="M7.5 14h9" opacity="0.55"/></svg>`,
+};
+function fallbackGlyphFor(subtype) {
+  return FALLBACK_GLYPHS[subtype] ?? FALLBACK_GLYPHS._flask;
+}
+// Try to load the bundled icon; if it 404s (e.g. icons not shipped on this
+// deploy), silently swap in the subtype-themed fallback glyph.
+function renderItemIconCell(it) {
+  const wrap = document.createElement("span");
+  wrap.className = "row__icon";
+  wrap.dataset.subtype = it.subtype;
+  if (it.icon) {
+    const img = document.createElement("img");
+    img.src = `./assets/icons/${it.icon}`;
+    img.alt = "";
+    img.loading = "lazy";
+    img.decoding = "async";
+    img.addEventListener("error", () => { wrap.innerHTML = fallbackGlyphFor(it.subtype); }, { once: true });
+    wrap.appendChild(img);
+  } else {
+    wrap.innerHTML = fallbackGlyphFor(it.subtype);
+  }
+  return wrap;
+}
+function renderDetailIcon(it) {
+  const wrap = document.createElement("div");
+  wrap.className = "detail__icon";
+  wrap.dataset.subtype = it.subtype;
+  if (it.icon) {
+    const img = document.createElement("img");
+    img.src = `./assets/icons/${it.icon}`;
+    img.alt = it.name;
+    img.loading = "lazy";
+    img.decoding = "async";
+    img.addEventListener("error", () => {
+      const glyph = fallbackGlyphFor(it.subtype).replace('class="row__icon-glyph"', 'class="detail__icon-glyph"');
+      wrap.innerHTML = glyph;
+    }, { once: true });
+    wrap.appendChild(img);
+  } else {
+    const glyph = fallbackGlyphFor(it.subtype).replace('class="row__icon-glyph"', 'class="detail__icon-glyph"');
+    wrap.innerHTML = glyph;
+  }
+  return wrap;
+}
+
 function renderRow(it) {
   const row = document.createElement("tr");
   row.className = "row"; row.dataset.id = it.id;
+  if (state.known.has(it.id)) row.classList.add("is-known");
 
+  // — "Known formula" toggle —
   const tdStar = document.createElement("td"); tdStar.className = "col-star";
-  const star = document.createElement("button");
-  star.type = "button";
-  star.className = "star" + (state.known.has(it.id) ? " is-on" : "");
-  star.textContent = state.known.has(it.id) ? "★" : "☆";
-  star.setAttribute("aria-label", "Toggle known formula");
-  star.addEventListener("click", (e) => { e.stopPropagation(); toggleKnown(it.id); });
-  tdStar.appendChild(star);
+  const known = document.createElement("button");
+  known.type = "button";
+  known.className = "known-toggle" + (state.known.has(it.id) ? " is-on" : "");
+  known.setAttribute("aria-label", "Toggle known formula");
+  known.setAttribute("aria-pressed", state.known.has(it.id) ? "true" : "false");
+  known.title = state.known.has(it.id) ? "Remove from formula book" : "Mark as known";
+  known.innerHTML = KNOWN_TOGGLE_SVG;
+  known.addEventListener("click", (e) => { e.stopPropagation(); toggleKnown(it.id); });
+  tdStar.appendChild(known);
   row.appendChild(tdStar);
 
+  // — Expand chevron —
   const tdOpen = document.createElement("td"); tdOpen.className = "col-open";
   const chev = document.createElement("span"); chev.className = "row__expand";
   chev.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg>`;
   tdOpen.appendChild(chev);
   row.appendChild(tdOpen);
 
+  // — Name cell with icon + text —
   const tdName = document.createElement("td"); tdName.className = "col-name row__name";
+  const cell = document.createElement("div"); cell.className = "row__name-cell";
+  cell.appendChild(renderItemIconCell(it));
+  const textWrap = document.createElement("div"); textWrap.className = "row__name-text";
   const baseSpan = document.createElement("span"); baseSpan.className = "row__name-base"; baseSpan.textContent = it.base;
-  tdName.appendChild(baseSpan);
+  textWrap.appendChild(baseSpan);
   if (it.grade) {
     const gradeSpan = document.createElement("span");
-    gradeSpan.className = "row__name-grade"; gradeSpan.textContent = `(${it.grade})`;
-    tdName.appendChild(gradeSpan);
+    gradeSpan.className = "row__name-grade"; gradeSpan.textContent = it.grade;
+    textWrap.appendChild(gradeSpan);
   }
+  cell.appendChild(textWrap);
+  tdName.appendChild(cell);
   row.appendChild(tdName);
 
   const tdType = document.createElement("td"); tdType.className = "col-subtype";
@@ -1227,6 +1437,7 @@ function renderRow(it) {
 }
 function renderDetail(it) {
   const wrap = document.createElement("div"); wrap.className = "detail";
+  wrap.appendChild(renderDetailIcon(it));
   const body = document.createElement("div"); body.className = "detail__body";
   body.innerHTML = it.description || "<p><em>No description.</em></p>";
   wrap.appendChild(body);
@@ -1323,11 +1534,12 @@ function syncOpenRow() {
 }
 function syncKnownStars() {
   for (const { row, item } of rowIndex.values()) {
-    const star = row.querySelector(".star");
-    if (!star) continue;
+    const toggle = row.querySelector(".known-toggle");
+    if (!toggle) continue;
     const on = state.known.has(item.id);
-    star.classList.toggle("is-on", on);
-    star.textContent = on ? "★" : "☆";
+    toggle.classList.toggle("is-on", on);
+    toggle.setAttribute("aria-pressed", on ? "true" : "false");
+    toggle.title = on ? "Remove from formula book" : "Mark as known";
     row.classList.toggle("is-known", on);
   }
 }
